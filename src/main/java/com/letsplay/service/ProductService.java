@@ -2,6 +2,8 @@ package com.letsplay.service;
 
 import com.letsplay.dto.ProductRequest;
 import com.letsplay.dto.ProductResponse;
+import com.letsplay.exception.ResourceNotFoundException;
+import com.letsplay.exception.UnauthorizedException;
 import com.letsplay.model.Product;
 import com.letsplay.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -37,10 +39,10 @@ public class ProductService {
 
     public ProductResponse update(String id, ProductRequest request, String ownerId) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
         if (!product.getOwner().equals(ownerId)) {
-            throw new RuntimeException("Not authorized to update this product");
+            throw new UnauthorizedException("Not authorized to update this product");
         }
 
         product.setName(request.getName());
